@@ -24,9 +24,11 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.elasticsearch.root.config.DataBaseConnectionInfo;
 import com.elasticsearch.root.config.DataBaseIndexType;
 import com.elasticsearch.root.service.SafetyRiskInfoService;
 import com.elasticsearch.root.tools.RestHighLevelClientFactory;
@@ -42,6 +44,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 
 	private Logger log = Loggers.getLogger(SafetyRiskInfoServiceImpl.class);
+	@Autowired
+	private DataBaseConnectionInfo dataBaseInfo;
 
 	/**
 	 * 隐患查询
@@ -144,7 +148,7 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		searchRequest.types(DataBaseIndexType.TYPE);
 
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean();
+			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 
 			RestStatus restStatus = searchResponse.status();
@@ -195,7 +199,7 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 			if (StringUtils.isEmpty(id)) {
 				return "{'data':'','status':'1','total':0}";
 			}
-			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean();
+			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
 			IdsQueryBuilder queryBuilder = QueryBuilders.idsQuery().addIds(id);
 			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 			sourceBuilder.query(queryBuilder);
@@ -260,7 +264,7 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		searchRequest.types(DataBaseIndexType.TYPE);
 
 		try {
-			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean();
+			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 
 			RestStatus restStatus = searchResponse.status();

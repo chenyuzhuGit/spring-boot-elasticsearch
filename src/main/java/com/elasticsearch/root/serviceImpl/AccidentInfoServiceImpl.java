@@ -28,9 +28,11 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.elasticsearch.root.config.DataBaseConnectionInfo;
 import com.elasticsearch.root.config.DataBaseIndexType;
 import com.elasticsearch.root.service.AccidentInfoService;
 import com.elasticsearch.root.tools.RestHighLevelClientFactory;
@@ -46,6 +48,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AccidentInfoServiceImpl implements AccidentInfoService {
 
 	private Logger log = Loggers.getLogger(AccidentInfoServiceImpl.class);
+	@Autowired
+	private DataBaseConnectionInfo dataBaseInfo;
 
 	/**
 	 * 事故查询
@@ -90,7 +94,7 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 			if (!StringUtils.isEmpty(startTimeOccurrence)) {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				sdf.setTimeZone(TimeZone.getTimeZone("GMT"));// es数据库默认是0时区，我们使用的北京时间东八区，所以这里设置默认时区为0时区
-				//结束时间为空时，默认为当前时间
+				// 结束时间为空时，默认为当前时间
 				Date endTime = null;
 				if (StringUtils.isEmpty(endTimeOccurrence)) {
 					endTime = new Date();
@@ -136,7 +140,7 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 			searchRequest.source(sourceBuilder);
 			searchRequest.types(DataBaseIndexType.TYPE);
 
-			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean();
+			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 
 			RestStatus restStatus = searchResponse.status();
@@ -183,7 +187,7 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 			if (StringUtils.isEmpty(id)) {
 				return "{'data':'','status':'1','total':0}";
 			}
-			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean();
+			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
 			IdsQueryBuilder queryBuilder = QueryBuilders.idsQuery().addIds(id);
 			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 			sourceBuilder.query(queryBuilder);
