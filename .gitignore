@@ -23,3 +23,11 @@
 /nbdist/
 /.nb-gradle/
 /build/
+
+###Eclipse###
+.externalToolBuilders
+
+###Maven###
+.mvn
+mvnw
+mvnw.cmd
