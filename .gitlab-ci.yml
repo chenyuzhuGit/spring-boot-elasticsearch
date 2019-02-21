@@ -6,7 +6,14 @@ build of prd:
   stage: build
   script:
     - docker pull maven
+    - \cp -rf ci/application.properties src/main/resources/application.properties
     - docker run -i --rm -v /data/build/maven:/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven mvn clean package spring-boot:repackage
+    - mv target/ydsys.war ci/ROOT.war
+    - cd ci
+    - echo 'es_query' > projectname
+    - echo 'prd' > environment
+    - chmod +x build.sh
+    - ./build.sh
   only:
     - master
   tags:
@@ -15,7 +22,12 @@ build of prd:
 deploy of prd:
   stage: deploy
   script:
-    - echo "test"
+    - cd ci
+    - echo 'es_query' > projectname
+    - echo 'prd' > environment
+    - echo '4027' > appport
+    - chmod +x deploy.sh
+    - ./deploy.sh
   only:
     - master
   tags:
