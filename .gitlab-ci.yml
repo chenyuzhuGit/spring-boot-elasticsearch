@@ -1,0 +1,22 @@
+stages:
+  - build
+  - deploy
+
+build of prd:
+  stage: build
+  script:
+    - docker pull maven
+    - docker run -i --rm -v /data/build/maven:/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven mvn clean package spring-boot:repackage
+  only:
+    - master
+  tags:
+    - prd_maven
+
+deploy of prd:
+  stage: deploy
+  script:
+    - echo "test"
+  only:
+    - master
+  tags:
+    - prd_node_java
