@@ -1,4 +1,3 @@
-/.history
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
@@ -32,3 +31,8 @@
 .mvn
 mvnw
 mvnw.cmd
+
+###VSCODE###
+/.history
+/.vscode
+!/.vscode/settings.json
