@@ -86,17 +86,17 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 			// fuzzyQuery：模糊查询。
 			// rangeQuery：范围内查询。
 			// 事故类型
-			if (!StringUtils.isEmpty(accidentType)) {
+			if (!StringUtils.isEmpty(accidentType) && !"null".equals(accidentType)) {
 				boolQueryBuilder.must(QueryBuilders.matchQuery("accidentType", accidentType));
 			}
 
 			// 发生时间---开始、发生时间---结束
-			if (!StringUtils.isEmpty(startTimeOccurrence)) {
+			if (!StringUtils.isEmpty(startTimeOccurrence) && !"null".equals(startTimeOccurrence)) {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				sdf.setTimeZone(TimeZone.getTimeZone("GMT"));// es数据库默认是0时区，我们使用的北京时间东八区，所以这里设置默认时区为0时区
 				// 结束时间为空时，默认为当前时间
 				Date endTime = null;
-				if (StringUtils.isEmpty(endTimeOccurrence)) {
+				if (StringUtils.isEmpty(endTimeOccurrence) && !"null".equals(endTimeOccurrence)) {
 					endTime = new Date();
 				} else {
 					endTime = sdf.parse(endTimeOccurrence);
@@ -108,28 +108,28 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 				);
 			}
 			// 事故地点---省
-			if (!StringUtils.isEmpty(takePlaceProvince)) {
+			if (!StringUtils.isEmpty(takePlaceProvince) && !"null".equals(takePlaceProvince)) {
 				boolQueryBuilder.must(QueryBuilders.matchQuery("accidentLocation.province", takePlaceProvince));
 			}
 			// 事故地点---市
-			if (!StringUtils.isEmpty(takePlaceCity)) {
+			if (!StringUtils.isEmpty(takePlaceCity) && !"null".equals(takePlaceCity)) {
 				boolQueryBuilder.must(QueryBuilders.matchQuery("accidentLocation.city", takePlaceCity));
 			}
 			// 事故地点---区
-			if (!StringUtils.isEmpty(takePlaceArea)) {
+			if (!StringUtils.isEmpty(takePlaceArea) && !"null".equals(takePlaceArea)) {
 				boolQueryBuilder.must(QueryBuilders.matchQuery("accidentLocation.county", takePlaceArea));
 			}
 			// 企业名称
-			if (!StringUtils.isEmpty(hazardUnits)) {
+			if (!StringUtils.isEmpty(hazardUnits) && !"null".equals(hazardUnits)) {
 				// fuzzy表示模糊查询
 				boolQueryBuilder.must(QueryBuilders.fuzzyQuery("unitName", hazardUnits));
 			}
 			// 行业分类---一级
-			if (!StringUtils.isEmpty(industryLevelOne)) {
+			if (!StringUtils.isEmpty(industryLevelOne) && !"null".equals(industryLevelOne)) {
 				boolQueryBuilder.must(QueryBuilders.matchQuery("industryFirst", industryLevelOne));
 			}
 			// 行业分类---二级
-			if (!StringUtils.isEmpty(industryLevelTwo)) {
+			if (!StringUtils.isEmpty(industryLevelTwo) && !"null".equals(industryLevelTwo)) {
 				boolQueryBuilder.must(QueryBuilders.matchQuery("industrySecond", industryLevelTwo));
 			}
 

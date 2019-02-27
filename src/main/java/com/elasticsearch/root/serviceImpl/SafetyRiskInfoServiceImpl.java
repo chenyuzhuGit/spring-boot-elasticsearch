@@ -102,41 +102,41 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		// fuzzyQuery：模糊查询。
 		// rangeQuery：范围内查询。
 		// 企业名称
-		if (copmpanyNameResults.size() != 0) {
+		if (copmpanyNameResults.size() != 0 && !"null".equals(copmpanyNameResults)) {
 			// terms表示in查询，projectName加上".keyword",表示精确匹配
 			boolQueryBuilder.must(QueryBuilders.termsQuery("unitName.keyword", copmpanyNameResults));
 		}
 		// 项目名称
-		if (copmpanyProjectResults.size() != 0) {
+		if (copmpanyProjectResults.size() != 0 && !"null".equals(copmpanyProjectResults)) {
 			// terms表示in查询，projectName加上".keyword",表示精确匹配
 			boolQueryBuilder.must(QueryBuilders.termsQuery("projectName.keyword", copmpanyProjectResults));
 		}
 		// 隐患地点---省
-		if (!StringUtils.isEmpty(hiddenPlaceProvince)) {
+		if (!StringUtils.isEmpty(hiddenPlaceProvince) && !"null".equals(hiddenPlaceProvince)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.province", hiddenPlaceProvince));
 		}
 		// 隐患地点---市
-		if (!StringUtils.isEmpty(hiddenPlaceCity)) {
+		if (!StringUtils.isEmpty(hiddenPlaceCity) && !"null".equals(hiddenPlaceCity)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.city", hiddenPlaceCity));
 		}
 		// 隐患地点---区
-		if (!StringUtils.isEmpty(hiddenPlaceArea)) {
+		if (!StringUtils.isEmpty(hiddenPlaceArea) && !"null".equals(hiddenPlaceArea)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.county", hiddenPlaceArea));
 		}
 		// 隐患等级
-		if (!StringUtils.isEmpty(hazardLevel)) {
+		if (!StringUtils.isEmpty(hazardLevel) && !"null".equals(hazardLevel)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("riskLevel", hazardLevel));
 		}
 		// 隐患类别--一级
-		if (!StringUtils.isEmpty(hazardCategoryLevelOne)) {
+		if (!StringUtils.isEmpty(hazardCategoryLevelOne) && !"null".equals(hazardCategoryLevelOne)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("riskCategory.first", hazardCategoryLevelOne));
 		}
 		// 隐患等级--二级
-		if (!StringUtils.isEmpty(hazardCategoryLevelTwo)) {
+		if (!StringUtils.isEmpty(hazardCategoryLevelTwo) && !"null".equals(hazardCategoryLevelTwo)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("riskCategory.second", hazardCategoryLevelTwo));
 		}
 		// 可能导致的事故
-		if (!StringUtils.isEmpty(probableAccident)) {
+		if (!StringUtils.isEmpty(probableAccident) && !"null".equals(probableAccident)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("possibleAccidents", probableAccident));
 		}
 
@@ -238,17 +238,17 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 		boolean isreturn = true;
 		// 行业分类---一级
-		if (!StringUtils.isEmpty(industryLevelOne)) {
+		if (!StringUtils.isEmpty(industryLevelOne) && !"null".equals(industryLevelOne)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("firstIndustry", industryLevelOne));
 			isreturn = false;
 		}
 		// 行业分类---二级
-		if (!StringUtils.isEmpty(industryLevelTwo)) {
+		if (!StringUtils.isEmpty(industryLevelTwo) && !"null".equals(industryLevelTwo)) {
 			boolQueryBuilder.must(QueryBuilders.matchQuery("secondIndustry", industryLevelTwo));
 			isreturn = false;
 		}
 		// 隐患单位（模糊查询）
-		if (!StringUtils.isEmpty(hazardUnits)) {
+		if (!StringUtils.isEmpty(hazardUnits) && !"null".equals(hazardUnits)) {
 			boolQueryBuilder.must(QueryBuilders.fuzzyQuery("unitName", hazardUnits));
 			isreturn = false;
 		}
