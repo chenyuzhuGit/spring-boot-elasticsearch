@@ -31,3 +31,8 @@
 .mvn
 mvnw
 mvnw.cmd
+
+###VSCODE###
+/.history
+/.vscode
+!/.vscode/settings.json

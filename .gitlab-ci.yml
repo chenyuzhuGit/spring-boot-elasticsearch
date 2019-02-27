@@ -1,0 +1,30 @@
+stages:
+  - build
+  - deploy
+
+build of prd:
+  stage: build
+  script:
+    - cd ci
+    - echo 'es_query' > projectname
+    - echo 'prd' > environment
+    - chmod +x build.sh
+    - ./build.sh
+  only:
+    - master
+  tags:
+    - prd_maven
+
+deploy of prd:
+  stage: deploy
+  script:
+    - cd ci
+    - echo 'es_query' > projectname
+    - echo 'prd' > environment
+    - echo '4027' > appport
+    - chmod +x deploy.sh
+    - ./deploy.sh
+  only:
+    - master
+  tags:
+    - prd_node_java
