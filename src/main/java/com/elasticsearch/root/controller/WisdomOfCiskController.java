@@ -7,7 +7,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.elasticsearch.root.config.DataBaseIndexType;
+import com.elasticsearch.root.config.DataBaseIndex;
+import com.elasticsearch.root.config.DataBaseType;
 import com.elasticsearch.root.service.AccidentInfoService;
 import com.elasticsearch.root.service.SafetyRiskInfoService;
 
@@ -25,6 +26,8 @@ public class WisdomOfCiskController {
 	private SafetyRiskInfoService safetyRiskInfoService;
 	@Autowired
 	private AccidentInfoService accidentInfoService;
+//	@Autowired
+//	private BaseDaoService base;
 
 	/**
 	 * 隐患数据查询
@@ -50,8 +53,8 @@ public class WisdomOfCiskController {
 	public String getSafetyRiskByIds(HttpServletRequest request, ModelMap modelMap) {
 		String id = request.getParameter("id");
 
-		String safetyRiskInfos = safetyRiskInfoService.idsQuery(DataBaseIndexType.SAFETY_RISK_INFO_INDEX,
-				DataBaseIndexType.TYPE, id);
+		String safetyRiskInfos = safetyRiskInfoService.idsQuery(DataBaseIndex.SAFETY_RISK_INFO_INDEX,
+				DataBaseType.DOC_TYPE, id);
 		return safetyRiskInfos;
 	}
 
@@ -79,8 +82,8 @@ public class WisdomOfCiskController {
 	public String getAccidentCasesByIds(HttpServletRequest request, ModelMap modelMap) {
 		String id = request.getParameter("id");
 
-		String safetyRiskInfos = safetyRiskInfoService.idsQuery(DataBaseIndexType.ACCIDENT_CASE_INDEX,
-				DataBaseIndexType.TYPE, id);
+		String safetyRiskInfos = safetyRiskInfoService.idsQuery(DataBaseIndex.ACCIDENT_CASE_INDEX,
+				DataBaseType.DOC_TYPE, id);
 		return safetyRiskInfos;
 	}
 }

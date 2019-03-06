@@ -33,7 +33,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.elasticsearch.root.config.DataBaseConnectionInfo;
-import com.elasticsearch.root.config.DataBaseIndexType;
+import com.elasticsearch.root.config.DataBaseIndex;
+import com.elasticsearch.root.config.DataBaseType;
 import com.elasticsearch.root.service.AccidentInfoService;
 import com.elasticsearch.root.tools.RestHighLevelClientFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,7 +84,7 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 		try {
 			// matchQuery：会将搜索词分词，再与目标查询字段进行匹配，若分词中的任意一个词与目标字段匹配上，则可查询到。
 			// termQuery：不会对搜索词进行分词处理，而是作为一个整体与目标字段进行匹配，若完全匹配，则可查询到。
-			// fuzzyQuery：模糊查询。
+			// fuzzyQuery：模糊查询,分词的字段不太好用。
 			// rangeQuery：范围内查询。
 			// 事故类型
 			if (!StringUtils.isEmpty(accidentType) && !"null".equals(accidentType)) {
@@ -136,9 +137,9 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 			sourceBuilder.query(boolQueryBuilder);
 
 			SearchRequest searchRequest = new SearchRequest();
-			searchRequest.indices(DataBaseIndexType.ACCIDENT_CASE_INDEX);
+			searchRequest.indices(DataBaseIndex.ACCIDENT_CASE_INDEX);
 			searchRequest.source(sourceBuilder);
-			searchRequest.types(DataBaseIndexType.TYPE);
+			searchRequest.types(DataBaseType.DOC_TYPE);
 
 			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
