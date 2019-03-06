@@ -21,7 +21,7 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void matchAllQuery(BoolQueryCombination bqueryCombinnation) throws Exception;
+	void matchAllQuery(boolQueryType type) throws Exception;
 	// --------------------Match All Queries---End------------
 
 	// --------------------Full Text Queries---start------------
@@ -30,7 +30,7 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void matchQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void matchQuery(String field, String value, boolQueryType type) throws Exception;
 
 	/**
 	 * 短语匹配查询。 首先解析查询字符串value，产生一个词条列表。然后根据词条列表的所有词条，查询出包含所有词条并且符合词条列表顺序的文档
@@ -38,7 +38,7 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void matchPhraseQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void matchPhraseQuery(String field, String value, boolQueryType type) throws Exception;
 
 	/**
 	 * 短语匹配查询。 首先解析查询字符串value，产生一个词条列表。然后根据词条列表的所有词条，查询出包含所有词条并且符合词条列表顺序的文档
@@ -46,14 +46,14 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void matchPhrasePrefixQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void matchPhrasePrefixQuery(String field, String value, boolQueryType type) throws Exception;
 
 	/**
 	 * 多字段匹配查询。 多个字段匹配一个值（为全匹配查询）
 	 * 
 	 * @throws Exception
 	 */
-	void multiMatchQuery(Object field, String[] fieldNames, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void multiMatchQuery(Object field, String[] fieldNames, boolQueryType type) throws Exception;
 
 	/**
 	 * 查询解析查询字符串 如下查询 hotelName 字段 查询 QueryString 为 "四 AND 酒 AND 店 " 查询结果是 hotelName
@@ -61,7 +61,7 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void queryStringQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void queryStringQuery(String field, String value, boolQueryType type) throws Exception;
 
 	/**
 	 * 简单查询解析查询字符串 如下查询 hotelName 字段 查询 QueryString 为 "四 AND 酒 AND 店 " 查询结果是
@@ -70,7 +70,7 @@ public interface BaseDaoService {
 	 * @throws Exception
 	 */
 	void simpleQueryStringQuery(String field, String value, SimpleQueryStringFlag flag,
-			BoolQueryCombination bqueryCombinnation) throws Exception;
+			boolQueryType type) throws Exception;
 	// --------------------Full Text Queries---End------------
 
 	// --------------------Term level Queries---start------------
@@ -79,33 +79,33 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void commonTermsQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void commonTermsQuery(String field, String value, boolQueryType type) throws Exception;
 
 	/**
 	 * 全匹配查询。 不会对搜索词进行分词处理，而是作为一个整体与目标字段进行匹配，若完全匹配，则可查询到 【相当于sql：field = 1】
 	 * 
 	 * @throws Exception
 	 */
-	void termQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void termQuery(String field, String value, boolQueryType type) throws Exception;
 
 	/**
 	 * in查询。 一个字段匹配多个值（为全匹配查询） termsQuery【相当于sql：field in (1,2,3)】
 	 * 
 	 * @throws Exception
 	 */
-	void termsQuery(String field, Collection<?> values, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void termsQuery(String field, Collection<?> values, boolQueryType type) throws Exception;
 
-	void termsQuery(String field, double[] value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void termsQuery(String field, double[] value, boolQueryType type) throws Exception;
 
-	void termsQuery(String field, float[] value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void termsQuery(String field, float[] value, boolQueryType type) throws Exception;
 
-	void termsQuery(String field, int[] value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void termsQuery(String field, int[] value, boolQueryType type) throws Exception;
 
-	void termsQuery(String field, Object[] value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void termsQuery(String field, Object[] value, boolQueryType type) throws Exception;
 
-	void termsQuery(String field, long[] value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void termsQuery(String field, long[] value, boolQueryType type) throws Exception;
 
-	void termsQuery(String field, String[] value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void termsQuery(String field, String[] value, boolQueryType type) throws Exception;
 
 	/**
 	 * 范围查询。 rangeQuery【相当于sql：field > 1 and field<30】
@@ -113,21 +113,21 @@ public interface BaseDaoService {
 	 * @throws Exception
 	 */
 	void rangeQuery(String field, Object from, Object to, boolean includeLower, boolean includeUpper,
-			BoolQueryCombination bqueryCombinnation) throws Exception;
+			boolQueryType type) throws Exception;
 
 	/**
 	 * 字段非空查询。 查询某个字段值非空的记录 existsQuery【相当于sql：field is not null】
 	 * 
 	 * @throws Exception
 	 */
-	void existsQuery(String field, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void existsQuery(String field, boolQueryType type) throws Exception;
 
 	/**
 	 * 字段前缀查询。 查询某个字段值非空的记录 prefixQuery【相当于sql：field like '张*'】
 	 * 
 	 * @throws Exception
 	 */
-	void prefixQuery(String field, String prefix, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void prefixQuery(String field, String prefix, boolQueryType type) throws Exception;
 
 	/**
 	 * 通配符查询。 查询某个字段值非空的记录 wildcardQuery【相当于sql：field like '*张_三*'】
@@ -135,14 +135,14 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void wildcardQuery(String field, String prefix, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void wildcardQuery(String field, String prefix, boolQueryType type) throws Exception;
 
 	/**
 	 * 正则表达式查询。 查找指定字段包含与指定的正则表达式匹配的术语的文档。
 	 * 
 	 * @throws Exception
 	 */
-	void regexpQuery(String field, String regexp, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void regexpQuery(String field, String regexp, boolQueryType type) throws Exception;
 
 	/**
 	 * 模糊度查询。 通过fuzziness设置可以错几个
@@ -150,21 +150,21 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void fuzzyQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void fuzzyQuery(String field, String value, boolQueryType type) throws Exception;
 
 	/**
 	 * 类型查询。 相当于sql：select * from table 查找指定类型的文档。
 	 * 
 	 * @throws Exception
 	 */
-	void typeQuery(String type, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void typeQuery(String indextype, boolQueryType type) throws Exception;
 
 	/**
 	 * 类型主键查询。 相当于sql：select * from table where id in (1,2) 查找具有指定类型和ID的文档。
 	 * 
 	 * @throws Exception
 	 */
-	void idsQuery(String[] types, String[] ids, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void idsQuery(String[] types, String[] ids, boolQueryType type) throws Exception;
 
 	// --------------------Term level Queries---End---------
 	// --------------------Compound Queries---start---------
@@ -174,7 +174,7 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void constantScoreQuery(QueryBuilder queryBuilder, BoolQueryCombination bqueryCombinnation) throws Exception;
+	void constantScoreQuery(QueryBuilder queryBuilder, boolQueryType type) throws Exception;
 
 	/**
 	 * 用于组合多个叶子或复合查询子句的默认查询，包含must, should, must_not, or filter

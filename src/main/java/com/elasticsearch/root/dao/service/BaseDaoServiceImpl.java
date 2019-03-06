@@ -22,172 +22,168 @@ import com.elasticsearch.root.tools.RestHighLevelClientFactory;
 public class BaseDaoServiceImpl implements BaseDaoService {
 	@Autowired
 	private DataBaseConnectionInfo dataBaseInfo;
-	// 获取单例的RestHighLevelClient对象 ,使用这个对象，执行对es数据库的操作
 	private BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 	private DisMaxQueryBuilder dixMaxQueryBuilder = QueryBuilders.disMaxQuery();
 
 	@Override
-	public void matchAllQuery(BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void matchAllQuery(boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.matchAllQuery());
+		boolQuery(QueryBuilders.matchAllQuery(), type);
 	}
 
 	@Override
-	public void matchQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void matchQuery(String field, String value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.matchQuery(field, value));
+		boolQuery(QueryBuilders.matchQuery(field, value), type);
 	}
 
 	@Override
-	public void matchPhraseQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void matchPhraseQuery(String field, String value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.matchPhraseQuery(field, value));
+		boolQuery(QueryBuilders.matchPhraseQuery(field, value), type);
 	}
 
 	@Override
-	public void matchPhrasePrefixQuery(String field, String value, BoolQueryCombination bqueryCombinnation)
+	public void matchPhrasePrefixQuery(String field, String value, boolQueryType type) throws Exception {
+		// TODO Auto-generated method stub
+		boolQuery(QueryBuilders.matchQuery(field, value), type);
+	}
+
+	@Override
+	public void multiMatchQuery(Object field, String[] fieldNames, boolQueryType type) throws Exception {
+		// TODO Auto-generated method stub
+		boolQuery(QueryBuilders.multiMatchQuery(field, fieldNames), type);
+	}
+
+	@Override
+	public void queryStringQuery(String field, String value, boolQueryType type) throws Exception {
+		// TODO Auto-generated method stub
+		boolQuery(QueryBuilders.queryStringQuery(field).defaultField(value), type);
+	}
+
+	@Override
+	public void simpleQueryStringQuery(String field, String value, SimpleQueryStringFlag flag, boolQueryType type)
 			throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.matchQuery(field, value));
+		boolQuery(QueryBuilders.simpleQueryStringQuery(field).flags(flag), type);
 	}
 
 	@Override
-	public void multiMatchQuery(Object field, String[] fieldNames, BoolQueryCombination bqueryCombinnation)
-			throws Exception {
+	public void commonTermsQuery(String field, String value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.multiMatchQuery(field, fieldNames));
-	}
-
-	@Override
-	public void queryStringQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception {
-		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.queryStringQuery(field).defaultField(value));
-	}
-
-	@Override
-	public void simpleQueryStringQuery(String field, String value, SimpleQueryStringFlag flag,
-			BoolQueryCombination bqueryCombinnation) throws Exception {
-		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.simpleQueryStringQuery(field).flags(flag));
-	}
-
-	@Override
-	public void commonTermsQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception {
-		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.matchQuery(field, value));
+		boolQuery(QueryBuilders.matchQuery(field, value), type);
 
 	}
 
 	@Override
-	public void termQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void termQuery(String field, String value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.matchQuery(field, value));
+		boolQuery(QueryBuilders.matchQuery(field, value), type);
 	}
 
 	@Override
-	public void termsQuery(String field, Collection<?> values, BoolQueryCombination bqueryCombinnation)
-			throws Exception {
+	public void termsQuery(String field, Collection<?> values, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.termsQuery(field, values));
+		boolQuery(QueryBuilders.termsQuery(field, values), type);
 	}
 
 	@Override
-	public void termsQuery(String field, double[] value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void termsQuery(String field, double[] value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.termsQuery(field, value));
+		boolQuery(QueryBuilders.termsQuery(field, value), type);
 	}
 
 	@Override
-	public void termsQuery(String field, float[] value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void termsQuery(String field, float[] value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.termsQuery(field, value));
+		boolQuery(QueryBuilders.termsQuery(field, value), type);
 	}
 
 	@Override
-	public void termsQuery(String field, int[] value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void termsQuery(String field, int[] value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.termsQuery(field, value));
+		boolQuery(QueryBuilders.termsQuery(field, value), type);
 	}
 
 	@Override
-	public void termsQuery(String field, Object[] value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void termsQuery(String field, Object[] value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.termsQuery(field, value));
+		boolQuery(QueryBuilders.termsQuery(field, value), type);
 	}
 
 	@Override
-	public void termsQuery(String field, long[] value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void termsQuery(String field, long[] value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.termsQuery(field, value));
+		boolQuery(QueryBuilders.termsQuery(field, value), type);
 	}
 
 	@Override
-	public void termsQuery(String field, String[] value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void termsQuery(String field, String[] value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.termsQuery(field, value));
+		boolQuery(QueryBuilders.termsQuery(field, value), type);
 	}
 
 	@Override
 	public void rangeQuery(String field, Object from, Object to, boolean includeLower, boolean includeUpper,
-			BoolQueryCombination bqueryCombinnation) throws Exception {
+			boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.rangeQuery(field).from(from).to(to)
-				.includeLower(includeLower).includeUpper(includeUpper));
+		boolQuery(
+				QueryBuilders.rangeQuery(field).from(from).to(to).includeLower(includeLower).includeUpper(includeUpper),
+				type);
 	}
 
 	@Override
-	public void existsQuery(String field, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void existsQuery(String field, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.existsQuery(field));
-
-	}
-
-	@Override
-	public void prefixQuery(String field, String prefix, BoolQueryCombination bqueryCombinnation) throws Exception {
-		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.prefixQuery(field, prefix));
+		boolQuery(QueryBuilders.existsQuery(field), type);
 
 	}
 
 	@Override
-	public void wildcardQuery(String field, String prefix, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void prefixQuery(String field, String prefix, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.wildcardQuery(field, prefix));
-	}
-
-	@Override
-	public void regexpQuery(String field, String regexp, BoolQueryCombination bqueryCombinnation) throws Exception {
-		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.regexpQuery(field, regexp));
+		boolQuery(QueryBuilders.prefixQuery(field, prefix), type);
 
 	}
 
 	@Override
-	public void fuzzyQuery(String field, String value, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void wildcardQuery(String field, String prefix, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.fuzzyQuery(field, value));
+		boolQuery(QueryBuilders.wildcardQuery(field, prefix), type);
+	}
+
+	@Override
+	public void regexpQuery(String field, String regexp, boolQueryType type) throws Exception {
+		// TODO Auto-generated method stub
+		boolQuery(QueryBuilders.regexpQuery(field, regexp), type);
 
 	}
 
 	@Override
-	public void typeQuery(String type, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void fuzzyQuery(String field, String value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.typeQuery(type));
+		boolQuery(QueryBuilders.fuzzyQuery(field, value), type);
 
 	}
 
 	@Override
-	public void idsQuery(String[] types, String[] ids, BoolQueryCombination bqueryCombinnation) throws Exception {
+	public void typeQuery(String indextype, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.idsQuery(types).addIds(ids));
+		boolQuery(QueryBuilders.typeQuery(indextype), type);
 
 	}
 
 	@Override
-	public void constantScoreQuery(QueryBuilder queryBuilder, BoolQueryCombination bqueryCombinnation)
-			throws Exception {
+	public void idsQuery(String[] types, String[] ids, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		bqueryCombinnation.combination(boolQueryBuilder, QueryBuilders.constantScoreQuery(queryBuilder));
+		boolQuery(QueryBuilders.idsQuery(types).addIds(ids), type);
+
+	}
+
+	@Override
+	public void constantScoreQuery(QueryBuilder queryBuilder, boolQueryType type) throws Exception {
+		// TODO Auto-generated method stub
+		boolQuery(QueryBuilders.constantScoreQuery(queryBuilder), type);
 	}
 
 	@Override
@@ -221,6 +217,7 @@ public class BaseDaoServiceImpl implements BaseDaoService {
 	}
 
 	public RestHighLevelClient getClient() {
+		// 获取单例的RestHighLevelClient对象 ,使用这个对象，执行对es数据库的操作
 		return RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
 	}
 
