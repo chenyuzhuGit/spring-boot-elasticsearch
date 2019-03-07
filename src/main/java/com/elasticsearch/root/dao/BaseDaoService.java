@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.AbstractQueryBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.DisMaxQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringFlag;
 
@@ -69,8 +71,8 @@ public interface BaseDaoService {
 	 * 
 	 * @throws Exception
 	 */
-	void simpleQueryStringQuery(String field, String value, SimpleQueryStringFlag flag,
-			boolQueryType type) throws Exception;
+	void simpleQueryStringQuery(String field, String value, SimpleQueryStringFlag flag, boolQueryType type)
+			throws Exception;
 	// --------------------Full Text Queries---End------------
 
 	// --------------------Term level Queries---start------------
@@ -210,6 +212,31 @@ public interface BaseDaoService {
 	 */
 	void disMaxQuery(List<QueryBuilder> queryBuilders, Float boost, Float tieBreaker) throws Exception;
 
-	public RestHighLevelClient getClient();
+	/**
+	 * 获取数据库操作对象
+	 * 
+	 * @return
+	 */
+	RestHighLevelClient getClient();
 
+	/**
+	 * 获取bollQuery对象
+	 * 
+	 * @return
+	 */
+	BoolQueryBuilder getBoolQueryBuilder();
+
+	/**
+	 * 获取DisMaxQueryBuilder对象
+	 * 
+	 * @return
+	 */
+	DisMaxQueryBuilder getDisMaxQueryBuilder();
+
+	/**
+	 * 清空查询条件
+	 * 
+	 * @return
+	 */
+	void cleanSearchConditions();
 }

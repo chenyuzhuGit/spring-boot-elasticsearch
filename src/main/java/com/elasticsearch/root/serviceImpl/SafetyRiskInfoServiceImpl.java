@@ -28,12 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.elasticsearch.root.config.DataBaseConnectionInfo;
 import com.elasticsearch.root.config.DataBaseIndex;
 import com.elasticsearch.root.config.DataBaseType;
 import com.elasticsearch.root.dao.BaseDaoService;
 import com.elasticsearch.root.service.SafetyRiskInfoService;
-import com.elasticsearch.root.tools.RestHighLevelClientFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**

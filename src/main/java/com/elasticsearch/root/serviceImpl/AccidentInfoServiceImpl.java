@@ -2,13 +2,11 @@ package com.elasticsearch.root.serviceImpl;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,6 +34,7 @@ import com.elasticsearch.root.config.DataBaseConnectionInfo;
 import com.elasticsearch.root.config.DataBaseIndex;
 import com.elasticsearch.root.config.DataBaseType;
 import com.elasticsearch.root.service.AccidentInfoService;
+import com.elasticsearch.root.tools.DateDealUtils;
 import com.elasticsearch.root.tools.RestHighLevelClientFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -93,16 +92,15 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 
 			// 发生时间---开始、发生时间---结束
 			if (!StringUtils.isEmpty(startTimeOccurrence) && !"null".equals(startTimeOccurrence)) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				sdf.setTimeZone(TimeZone.getTimeZone("GMT"));// es数据库默认是0时区，我们使用的北京时间东八区，所以这里设置默认时区为0时区
 				// 结束时间为空时，默认为当前时间
 				Date endTime = null;
 				if (StringUtils.isEmpty(endTimeOccurrence) && !"null".equals(endTimeOccurrence)) {
 					endTime = new Date();
 				} else {
-					endTime = sdf.parse(endTimeOccurrence);
+					endTime = DateDealUtils.timeZoneToEight(endTimeOccurrence, "yyyy-MM-dd HH:mm:ss");
 				}
-				boolQueryBuilder.must(QueryBuilders.rangeQuery("accidentTime").from(sdf.parse(startTimeOccurrence))// 开始时间
+				boolQueryBuilder.must(QueryBuilders.rangeQuery("accidentTime")
+						.from(DateDealUtils.timeZoneToEight(startTimeOccurrence, "yyyy-MM-dd HH:mm:ss"))// 开始时间
 						.to(endTime)// 结束时间
 						.includeLower(true)// 包含上界
 						.includeUpper(true)// 包含上界

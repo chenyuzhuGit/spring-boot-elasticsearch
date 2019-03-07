@@ -1,5 +1,7 @@
 package com.elasticsearch.root.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.elasticsearch.root.config.DataBaseIndex;
 import com.elasticsearch.root.config.DataBaseType;
+import com.elasticsearch.root.entity.SafetyRiskInfo;
 import com.elasticsearch.root.service.AccidentInfoService;
 import com.elasticsearch.root.service.SafetyRiskInfoService;
+import com.elasticsearch.root.tools.GetRequestParams;
 
 /**
  * 智慧风控数据查询接口
@@ -37,7 +41,8 @@ public class WisdomOfCiskController {
 	 * @return
 	 */
 	@RequestMapping("/getSafetyRisks")
-	public String getSafetyRisks(HttpServletRequest request, ModelMap modelMap) {
+	public String getSafetyRisks(HttpServletRequest request, ModelMap modelMap,SafetyRiskInfo ss) {
+		Map<String, Object> params =GetRequestParams.GetParamsByRequestObj(request);
 		String safetyRiskInfos = safetyRiskInfoService.safetyRiskInfoList(request);
 		return safetyRiskInfos;
 	}

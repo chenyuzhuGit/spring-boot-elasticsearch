@@ -7,6 +7,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.AbstractQueryBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.DisMaxQueryBuilder;
+import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.SimpleQueryStringFlag;
@@ -15,15 +16,14 @@ import org.springframework.stereotype.Component;
 
 import com.elasticsearch.root.config.DataBaseConnectionInfo;
 import com.elasticsearch.root.dao.BaseDaoService;
-import com.elasticsearch.root.dao.BoolQueryCombination;
 import com.elasticsearch.root.tools.RestHighLevelClientFactory;
 
 @Component
 public class BaseDaoServiceImpl implements BaseDaoService {
 	@Autowired
 	private DataBaseConnectionInfo dataBaseInfo;
-	private BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-	private DisMaxQueryBuilder dixMaxQueryBuilder = QueryBuilders.disMaxQuery();
+	private BoolQueryBuilder boolQueryBuilder = null;
+	private DisMaxQueryBuilder dixMaxQueryBuilder = null;
 
 	@Override
 	public void matchAllQuery(boolQueryType type) throws Exception {
@@ -71,14 +71,14 @@ public class BaseDaoServiceImpl implements BaseDaoService {
 	@Override
 	public void commonTermsQuery(String field, String value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		boolQuery(QueryBuilders.matchQuery(field, value), type);
+		boolQuery(QueryBuilders.commonTermsQuery(field, value), type);
 
 	}
 
 	@Override
 	public void termQuery(String field, String value, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		boolQuery(QueryBuilders.matchQuery(field, value), type);
+		boolQuery(QueryBuilders.termQuery(field, value), type);
 	}
 
 	@Override
@@ -176,7 +176,17 @@ public class BaseDaoServiceImpl implements BaseDaoService {
 	@Override
 	public void idsQuery(String[] types, String[] ids, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
-		boolQuery(QueryBuilders.idsQuery(types).addIds(ids), type);
+		if (ids == null || ids.length == 0) {
+			return;
+		}
+		IdsQueryBuilder query = null;
+		if (types == null || types.length == 0) {
+			query = QueryBuilders.idsQuery();
+		} else {
+			query = QueryBuilders.idsQuery(types);
+		}
+		query.addIds(ids);
+		boolQuery(query, type);
 
 	}
 
@@ -189,6 +199,9 @@ public class BaseDaoServiceImpl implements BaseDaoService {
 	@Override
 	public void boolQuery(AbstractQueryBuilder<?> queryBuilder, boolQueryType type) throws Exception {
 		// TODO Auto-generated method stub
+		if (boolQueryBuilder == null) {
+			boolQueryBuilder = QueryBuilders.boolQuery();
+		}
 		switch (type) {
 		case MUST:
 			boolQueryBuilder.must(queryBuilder);
@@ -210,15 +223,38 @@ public class BaseDaoServiceImpl implements BaseDaoService {
 	@Override
 	public void disMaxQuery(List<QueryBuilder> queryBuilders, Float boost, Float tieBreaker) throws Exception {
 		// TODO Auto-generated method stub
+		if (dixMaxQueryBuilder == null) {
+			dixMaxQueryBuilder = QueryBuilders.disMaxQuery();
+		}
 		for (QueryBuilder queryBuilder : queryBuilders) {
 			dixMaxQueryBuilder.add(queryBuilder);
 		}
 		dixMaxQueryBuilder.boost(boost).tieBreaker(tieBreaker);
 	}
 
+	@Override
 	public RestHighLevelClient getClient() {
 		// 获取单例的RestHighLevelClient对象 ,使用这个对象，执行对es数据库的操作
 		return RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
+	}
+
+	@Override
+	public BoolQueryBuilder getBoolQueryBuilder() {
+		// TODO Auto-generated method stub
+		return boolQueryBuilder;
+	}
+
+	@Override
+	public DisMaxQueryBuilder getDisMaxQueryBuilder() {
+		// TODO Auto-generated method stub
+		return dixMaxQueryBuilder;
+	}
+
+	@Override
+	public void cleanSearchConditions() {
+		// TODO Auto-generated method stub
+		boolQueryBuilder = null;
+		dixMaxQueryBuilder = null;
 	}
 
 }

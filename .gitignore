@@ -36,3 +36,6 @@ mvnw.cmd
 /.history
 /.vscode
 !/.vscode/settings.json
+
+###JAVA###
+src/test/java/com/elasticsearch/root/Test.java
