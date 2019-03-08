@@ -30,12 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.elasticsearch.root.config.DataBaseConnectionInfo;
 import com.elasticsearch.root.config.DataBaseIndex;
 import com.elasticsearch.root.config.DataBaseType;
+import com.elasticsearch.root.dao.service.DataOperationServiceImpl;
 import com.elasticsearch.root.service.AccidentInfoService;
 import com.elasticsearch.root.tools.DateDealUtils;
-import com.elasticsearch.root.tools.RestHighLevelClientFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -49,7 +48,7 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 
 	private Logger log = Loggers.getLogger(AccidentInfoServiceImpl.class);
 	@Autowired
-	private DataBaseConnectionInfo dataBaseInfo;
+	private DataOperationServiceImpl service;
 
 	/**
 	 * 事故查询
@@ -139,7 +138,7 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 			searchRequest.source(sourceBuilder);
 			searchRequest.types(DataBaseType.DOC_TYPE);
 
-			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
+			RestHighLevelClient client = service.getClient();
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 
 			RestStatus restStatus = searchResponse.status();
@@ -186,7 +185,7 @@ public class AccidentInfoServiceImpl implements AccidentInfoService {
 			if (StringUtils.isEmpty(id)) {
 				return "{'data':'','status':'1','total':0}";
 			}
-			RestHighLevelClient client = RestHighLevelClientFactory.getRestHighLevelClientBean(dataBaseInfo);
+			RestHighLevelClient client = service.getClient();
 			IdsQueryBuilder queryBuilder = QueryBuilders.idsQuery().addIds(id);
 			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 			sourceBuilder.query(queryBuilder);

@@ -43,6 +43,7 @@ public class WisdomOfCiskController {
 	@RequestMapping("/getSafetyRisks")
 	public String getSafetyRisks(HttpServletRequest request, ModelMap modelMap,SafetyRiskInfo ss) {
 		Map<String, Object> params =GetRequestParams.GetParamsByRequestObj(request);
+		String[] ssa=(String[]) params.get("id");
 		String safetyRiskInfos = safetyRiskInfoService.safetyRiskInfoList(request);
 		return safetyRiskInfos;
 	}

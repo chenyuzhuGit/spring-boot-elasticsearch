@@ -22,15 +22,14 @@ import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.elasticsearch.root.config.DataBaseIndex;
 import com.elasticsearch.root.config.DataBaseType;
-import com.elasticsearch.root.dao.BaseDaoService;
+import com.elasticsearch.root.dao.service.DataOperationServiceImpl;
+import com.elasticsearch.root.enums.BoolQueryType;
 import com.elasticsearch.root.service.SafetyRiskInfoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -45,13 +44,28 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 
 	private Logger log = Loggers.getLogger(SafetyRiskInfoServiceImpl.class);
 	@Autowired
-	private BaseDaoService dataBaseInfo;
-
+	private DataOperationServiceImpl service;
 	/**
 	 * 隐患查询
 	 */
 	@Override
 	public String safetyRiskInfoList(HttpServletRequest request) {
+		String[] unitNames = new String[2];
+		unitNames[0] = "accidentLocation.province"; // 字段1名称
+		unitNames[1] = "accidentLocation.city"; // 字段2名称
+		try {
+			service.setBoolQueryBuilder(QueryBuilders.boolQuery());
+			service.multiMatchQuery("安阳市", unitNames, BoolQueryType.MUST);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String[] fields = new String[3];
+		fields[0] = "id"; // 字段1名称
+		fields[1] = "unitName"; // 字段2名称
+		fields[2] = "accidentTitle"; // 字段2名称
+		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+		sourceBuilder.query(service.getBoolQueryBuilder());
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		ObjectMapper mapper = new ObjectMapper();
 		String hiddenPlaceProvince = request.getParameter("hiddenPlaceProvince");// 隐患地点---省
@@ -70,12 +84,30 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		String pageIndex = request.getParameter("pageIndex");// 页码数
 		Integer pagination = pageIndex != null && !StringUtils.isEmpty(pageIndex) ? Integer.parseInt(pageIndex) : 1;
 		Integer startIndex = (pagination - 1) * numberPage;
+		
+		if (!StringUtils.isEmpty(hiddenPlaceProvince) && !"null".equals(hiddenPlaceProvince)) {
+			try {
+				service.matchQuery("checkLocation.province", hiddenPlaceProvince,BoolQueryType.MUST);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// 隐患地点---市
+		if (!StringUtils.isEmpty(hiddenPlaceCity) && !"null".equals(hiddenPlaceCity)) {
+			try {
+				service.matchQuery("checkLocation.city", hiddenPlaceCity,BoolQueryType.MUST);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
-		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-		sourceBuilder.from(startIndex);// 起始位置
-		sourceBuilder.size(numberPage);// 查询数量
-		sourceBuilder.sort(new FieldSortBuilder("checkTime").order(SortOrder.ASC));
-		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+//		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+//		sourceBuilder.from(startIndex);// 起始位置
+//		sourceBuilder.size(numberPage);// 查询数量
+//		sourceBuilder.sort(new FieldSortBuilder("checkTime").order(SortOrder.ASC));
+//		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
 		// 隐患单位为空时，使用行业分类查询出来的企业信息设置隐患单位
 		// 根据行业分类从company_info索引获取企业项目信息
@@ -101,45 +133,45 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		// fuzzyQuery：模糊查询。
 		// rangeQuery：范围内查询。
 		// 企业名称
-		if (copmpanyNameResults.size() != 0 && !"null".equals(copmpanyNameResults)) {
-			// terms表示in查询，projectName加上".keyword",表示精确匹配
-			boolQueryBuilder.must(QueryBuilders.termsQuery("unitName.keyword", copmpanyNameResults));
-		}
-		// 项目名称
-		if (copmpanyProjectResults.size() != 0 && !"null".equals(copmpanyProjectResults)) {
-			// terms表示in查询，projectName加上".keyword",表示精确匹配
-			boolQueryBuilder.must(QueryBuilders.termsQuery("projectName.keyword", copmpanyProjectResults));
-		}
-		// 隐患地点---省
-		if (!StringUtils.isEmpty(hiddenPlaceProvince) && !"null".equals(hiddenPlaceProvince)) {
-			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.province", hiddenPlaceProvince));
-		}
-		// 隐患地点---市
-		if (!StringUtils.isEmpty(hiddenPlaceCity) && !"null".equals(hiddenPlaceCity)) {
-			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.city", hiddenPlaceCity));
-		}
-		// 隐患地点---区
-		if (!StringUtils.isEmpty(hiddenPlaceArea) && !"null".equals(hiddenPlaceArea)) {
-			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.county", hiddenPlaceArea));
-		}
-		// 隐患等级
-		if (!StringUtils.isEmpty(hazardLevel) && !"null".equals(hazardLevel)) {
-			boolQueryBuilder.must(QueryBuilders.matchQuery("riskLevel", hazardLevel));
-		}
-		// 隐患类别--一级
-		if (!StringUtils.isEmpty(hazardCategoryLevelOne) && !"null".equals(hazardCategoryLevelOne)) {
-			boolQueryBuilder.must(QueryBuilders.matchQuery("riskCategory.first", hazardCategoryLevelOne));
-		}
-		// 隐患等级--二级
-		if (!StringUtils.isEmpty(hazardCategoryLevelTwo) && !"null".equals(hazardCategoryLevelTwo)) {
-			boolQueryBuilder.must(QueryBuilders.matchQuery("riskCategory.second", hazardCategoryLevelTwo));
-		}
-		// 可能导致的事故
-		if (!StringUtils.isEmpty(probableAccident) && !"null".equals(probableAccident)) {
-			boolQueryBuilder.must(QueryBuilders.matchQuery("possibleAccidents", probableAccident));
-		}
+//		if (copmpanyNameResults.size() != 0 && !"null".equals(copmpanyNameResults)) {
+//			// terms表示in查询，projectName加上".keyword",表示精确匹配
+//			boolQueryBuilder.must(QueryBuilders.termsQuery("unitName.keyword", copmpanyNameResults));
+//		}
+//		// 项目名称
+//		if (copmpanyProjectResults.size() != 0 && !"null".equals(copmpanyProjectResults)) {
+//			// terms表示in查询，projectName加上".keyword",表示精确匹配
+//			boolQueryBuilder.must(QueryBuilders.termsQuery("projectName.keyword", copmpanyProjectResults));
+//		}
+//		// 隐患地点---省
+//		if (!StringUtils.isEmpty(hiddenPlaceProvince) && !"null".equals(hiddenPlaceProvince)) {
+//			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.province", hiddenPlaceProvince));
+//		}
+//		// 隐患地点---市
+//		if (!StringUtils.isEmpty(hiddenPlaceCity) && !"null".equals(hiddenPlaceCity)) {
+//			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.city", hiddenPlaceCity));
+//		}
+//		// 隐患地点---区
+//		if (!StringUtils.isEmpty(hiddenPlaceArea) && !"null".equals(hiddenPlaceArea)) {
+//			boolQueryBuilder.must(QueryBuilders.matchQuery("checkLocation.county", hiddenPlaceArea));
+//		}
+//		// 隐患等级
+//		if (!StringUtils.isEmpty(hazardLevel) && !"null".equals(hazardLevel)) {
+//			boolQueryBuilder.must(QueryBuilders.matchQuery("riskLevel", hazardLevel));
+//		}
+//		// 隐患类别--一级
+//		if (!StringUtils.isEmpty(hazardCategoryLevelOne) && !"null".equals(hazardCategoryLevelOne)) {
+//			boolQueryBuilder.must(QueryBuilders.matchQuery("riskCategory.first", hazardCategoryLevelOne));
+//		}
+//		// 隐患等级--二级
+//		if (!StringUtils.isEmpty(hazardCategoryLevelTwo) && !"null".equals(hazardCategoryLevelTwo)) {
+//			boolQueryBuilder.must(QueryBuilders.matchQuery("riskCategory.second", hazardCategoryLevelTwo));
+//		}
+//		// 可能导致的事故
+//		if (!StringUtils.isEmpty(probableAccident) && !"null".equals(probableAccident)) {
+//			boolQueryBuilder.must(QueryBuilders.matchQuery("possibleAccidents", probableAccident));
+//		}
 
-		sourceBuilder.query(boolQueryBuilder);
+//		sourceBuilder.query(boolQueryBuilder);
 
 		SearchRequest searchRequest = new SearchRequest();
 		searchRequest.indices(DataBaseIndex.SAFETY_RISK_INFO_INDEX);
@@ -147,9 +179,9 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		searchRequest.types(DataBaseType.DOC_TYPE);
 
 		try {
-			RestHighLevelClient client = dataBaseInfo.getClient();
+			RestHighLevelClient client = service.getClient();
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-
+//			service.cleanSearchConditions();
 			RestStatus restStatus = searchResponse.status();
 			if (restStatus != RestStatus.OK) {
 				resultMap.put("data", "");
@@ -198,7 +230,7 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 			if (StringUtils.isEmpty(id)) {
 				return "{'data':'','status':'1','total':0}";
 			}
-			RestHighLevelClient client = dataBaseInfo.getClient();
+			RestHighLevelClient client = service.getClient();
 			IdsQueryBuilder queryBuilder = QueryBuilders.idsQuery().addIds(id);
 			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 			sourceBuilder.query(queryBuilder);
@@ -263,7 +295,7 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		searchRequest.types(DataBaseType.DOC_TYPE);
 
 		try {
-			RestHighLevelClient client = dataBaseInfo.getClient();
+			RestHighLevelClient client = service.getClient();
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 
 			RestStatus restStatus = searchResponse.status();

@@ -25,6 +25,8 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.elasticsearch.root.config.DataBaseIndex;
+import com.elasticsearch.root.config.DataBaseType;
 import com.elasticsearch.root.dao.service.BaseDaoServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,9 +43,9 @@ public class EntityGenerator {
 	private BaseDaoServiceImpl service;
 	private RestHighLevelClient client;
 	// 索引
-	private String index = "safety_risk_info";
+	private String index = DataBaseIndex.SAFETY_RISK_INFO_INDEX;
 	// 索引类型
-	private String type = "doc";
+	private String type = DataBaseType.DOC_TYPE;
 	// 文件路径
 	private String filePath = "C:\\\\Users\\\\Administrator\\\\Desktop";
 	// 文件名称
@@ -56,7 +58,7 @@ public class EntityGenerator {
 		client = service.getClient();
 		try {
 			getElasticClient(index, type);
-			createFile();
+//			createFile();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
