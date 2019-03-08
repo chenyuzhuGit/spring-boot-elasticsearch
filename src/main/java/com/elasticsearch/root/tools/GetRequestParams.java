@@ -13,10 +13,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class GetRequestParams {
 	/**
-	 * 根据request对象获取参数 
-	 * 注：
-	 * 	1.相同字段的参数将以，"field_index"作为map中的key，如：id有多个值，id_0=1,id_1=2……
-	 * 	2.参数的类型都是String类型。
+	 * 根据request对象获取参数 注：
+	 * 1.相同字段的参数将以，"field_index"作为map中的key，如：id有多个值，id_0=1,id_1=2……
+	 * 2.参数的类型都是String类型。
 	 * 
 	 * @param request
 	 * @return
@@ -29,6 +28,10 @@ public class GetRequestParams {
 			int length = valueArray.length;
 			for (int i = 0; i < length; i++) {
 				if (length > 1) {
+					// 一个key有多个值时，将数组数据结构也放到map中
+					if (i == 0) {
+						results.put(param, valueArray);
+					}
 					results.put(param + "_" + i, valueArray[i]);
 				} else {
 					results.put(param, valueArray[i]);
