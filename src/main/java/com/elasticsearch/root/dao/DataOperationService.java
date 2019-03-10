@@ -1,5 +1,6 @@
 package com.elasticsearch.root.dao;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -233,4 +234,7 @@ public interface DataOperationService extends BaseDaoService {
 	 */
 	void cleanSearchConditions();
 
+	// -------------新增数据--------开始---------
+	// json数据字符串方式新增
+	void addDatas(String Index, String IndexType, String documentId, Object document) throws IOException;
 }

@@ -27,7 +27,7 @@ public class IndexOperationTest {
 //		boolean exists=existsIndexMethods();
 //		System.out.println(exists);
 		try {
-			deleteIndexMethods();
+//			deleteIndexMethods();
 		} catch (ElasticsearchException exception) {
 			if (exception.status() == RestStatus.NOT_FOUND) {
 				System.out.println("删除索引失败：没有找到您要删除的索引");
@@ -57,7 +57,7 @@ public class IndexOperationTest {
 						builder.startObject("properties");
 						{
 							{
-								builder.startObject("message");
+								builder.startObject("user");
 								{
 									{
 										builder.field("type", "text");
@@ -66,7 +66,16 @@ public class IndexOperationTest {
 								builder.endObject();
 							}
 							{
-								builder.startObject("message1");
+								builder.startObject("postDate");
+								{
+									{
+										builder.field("type", "date");
+									}
+								}
+								builder.endObject();
+							}
+							{
+								builder.startObject("message");
 								{
 									{
 										builder.field("type", "text");

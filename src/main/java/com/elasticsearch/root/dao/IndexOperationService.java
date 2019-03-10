@@ -41,10 +41,12 @@ public interface IndexOperationService extends BaseDaoService {
 	 * @throws Exception
 	 */
 	AcknowledgedResponse deleteIndex(String indexName) throws Exception;
+
 	/**
 	 * 获取索引信息
+	 * 
 	 * @param indexNames 索引数组
-	 * @param type 类型数组
+	 * @param type       类型数组
 	 * @return
 	 * @throws Exception
 	 */

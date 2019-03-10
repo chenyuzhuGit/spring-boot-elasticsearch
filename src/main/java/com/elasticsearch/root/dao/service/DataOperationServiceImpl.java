@@ -1,8 +1,20 @@
 package com.elasticsearch.root.dao.service;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import org.elasticsearch.action.DocWriteRequest;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.action.support.replication.ReplicationResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.AbstractQueryBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.CommonTermsQueryBuilder;
@@ -321,6 +333,51 @@ public class DataOperationServiceImpl extends BaseDaoServiceImpl implements Data
 		// TODO Auto-generated method stub
 		boolQueryBuilder = null;
 		dixMaxQueryBuilder = null;
+	}
+
+	@Override
+	public void addDatas(String Index, String IndexType, String documentId, Object documentJson) throws IOException {
+		// TODO Auto-generated method stub
+		// 参数：索引、类型、记录id
+		IndexRequest request = new IndexRequest(Index, IndexType, documentId);
+//		request.routing("routing");
+//		request.parent("parent");
+		request.timeout(TimeValue.timeValueSeconds(1));
+		request.setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL);
+		// 判断新增操作的类型，索引操作有两种，一种是INDEX，当要索引的文档id已经存在时，是更新原来文档。一种是CREATE，当索引文档id存在时，会抛出该文档已存在的错误。
+		request.opType(DocWriteRequest.OpType.CREATE);
+//		request.setPipeline("pipeline");
+		if (documentJson instanceof String) {
+			// 需要制定数据包装类型
+			request.source((String) documentJson, XContentType.JSON);
+		} else if (documentJson instanceof XContentBuilder) {
+			// 作为XContentBuilder对象提供的文档源，Elasticsearch内置帮助程序以生成JSON内容
+			request.source((XContentBuilder) documentJson);
+		} else if (documentJson instanceof Map<?, ?>) {
+			// 提供的文档源Map自动转换为JSON格式
+			request.source((Map<?, ?>) documentJson);
+		}
+		IndexResponse indexResponse = getClient().index(request, RequestOptions.DEFAULT);
+
+		String index = indexResponse.getIndex();
+		String type = indexResponse.getType();
+		String id = indexResponse.getId();
+		long version = indexResponse.getVersion();
+		if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {
+			System.out.println("创建了记录");
+		} else if (indexResponse.getResult() == DocWriteResponse.Result.UPDATED) {
+			System.out.println("更新了记录");
+		}
+		ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
+		if (shardInfo.getTotal() != shardInfo.getSuccessful()) {
+			System.out.println("失败了：" + (shardInfo.getTotal() - shardInfo.getSuccessful()) + "条");
+		}
+		if (shardInfo.getFailed() > 0) {
+			for (ReplicationResponse.ShardInfo.Failure failure : shardInfo.getFailures()) {
+				String reason = failure.reason();
+			}
+		}
+
 	}
 
 }

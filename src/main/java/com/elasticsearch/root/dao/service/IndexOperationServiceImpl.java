@@ -90,10 +90,12 @@ public class IndexOperationServiceImpl extends BaseDaoServiceImpl implements Ind
 		request.masterNodeTimeout("1m");
 		request.indicesOptions(IndicesOptions.lenientExpandOpen());
 		AcknowledgedResponse deleteIndexResponse = null;
-		deleteIndexResponse = null;// getClient().indices().delete(request, RequestOptions.DEFAULT);
+//		deleteIndexResponse = getClient().indices().delete(request, RequestOptions.DEFAULT);
+		deleteIndexResponse = null;
 		return deleteIndexResponse;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public GetIndexResponse getIndex(String[] indexNames) throws Exception {
 		// TODO Auto-generated method stub
