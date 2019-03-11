@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
 import com.elasticsearch.root.config.DataBaseIndex;
 import com.elasticsearch.root.config.DataBaseType;
 import com.elasticsearch.root.dao.service.DataOperationServiceImpl;
+import com.elasticsearch.root.dao.service.DataSearchServiceImpl;
 import com.elasticsearch.root.enums.BoolQueryType;
 import com.elasticsearch.root.service.SafetyRiskInfoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +46,9 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 	private Logger log = Loggers.getLogger(SafetyRiskInfoServiceImpl.class);
 	@Autowired
 	private DataOperationServiceImpl service;
+	@Autowired
+	private DataSearchServiceImpl serviceSearch;
+
 	/**
 	 * 隐患查询
 	 */
@@ -54,8 +58,8 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		unitNames[0] = "accidentLocation.province"; // 字段1名称
 		unitNames[1] = "accidentLocation.city"; // 字段2名称
 		try {
-			service.setBoolQueryBuilder(QueryBuilders.boolQuery());
-			service.multiMatchQuery("安阳市", unitNames, BoolQueryType.MUST);
+			serviceSearch.setBoolQueryBuilder(QueryBuilders.boolQuery());
+			serviceSearch.multiMatchQuery("安阳市", unitNames, BoolQueryType.MUST);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -65,7 +69,7 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		fields[1] = "unitName"; // 字段2名称
 		fields[2] = "accidentTitle"; // 字段2名称
 		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-		sourceBuilder.query(service.getBoolQueryBuilder());
+		sourceBuilder.query(serviceSearch.getBoolQueryBuilder());
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		ObjectMapper mapper = new ObjectMapper();
 		String hiddenPlaceProvince = request.getParameter("hiddenPlaceProvince");// 隐患地点---省
@@ -84,10 +88,10 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		String pageIndex = request.getParameter("pageIndex");// 页码数
 		Integer pagination = pageIndex != null && !StringUtils.isEmpty(pageIndex) ? Integer.parseInt(pageIndex) : 1;
 		Integer startIndex = (pagination - 1) * numberPage;
-		
+
 		if (!StringUtils.isEmpty(hiddenPlaceProvince) && !"null".equals(hiddenPlaceProvince)) {
 			try {
-				service.matchQuery("checkLocation.province", hiddenPlaceProvince,BoolQueryType.MUST);
+				serviceSearch.matchQuery("checkLocation.province", hiddenPlaceProvince, BoolQueryType.MUST);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -96,7 +100,7 @@ public class SafetyRiskInfoServiceImpl implements SafetyRiskInfoService {
 		// 隐患地点---市
 		if (!StringUtils.isEmpty(hiddenPlaceCity) && !"null".equals(hiddenPlaceCity)) {
 			try {
-				service.matchQuery("checkLocation.city", hiddenPlaceCity,BoolQueryType.MUST);
+				serviceSearch.matchQuery("checkLocation.city", hiddenPlaceCity, BoolQueryType.MUST);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

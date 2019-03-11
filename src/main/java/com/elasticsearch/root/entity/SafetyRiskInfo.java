@@ -6,6 +6,8 @@ import java.util.Date;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * 隐患
  * 
@@ -43,6 +45,7 @@ public class SafetyRiskInfo implements Serializable {
 	private String codeRule_riskType;
 	private String suggest;
 	private String basis;
+	@JsonProperty("docs.count")
 	private String checkUnit_first;
 	private String checkUnit_second;
 	private String content;
